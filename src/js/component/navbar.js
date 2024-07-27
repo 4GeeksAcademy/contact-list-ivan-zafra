@@ -1,17 +1,61 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { Context } from "../store/appContext";
 
-export const Navbar = () => {
-	return (
-		<nav className="navbar navbar-light bg-light mb-3">
-			<Link to="/">
-				<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-			</Link>
-			<div className="ml-auto">
-				<Link to="/demo">
-					<button className="btn btn-primary">Check the Context in action</button>
-				</Link>
-			</div>
-		</nav>
-	);
+const NavBar = () => {
+  const { store, actions } = useContext(Context);
+
+  const checkUserName = (e) => {
+    console.log(store.userName);
+    if (store.newUserName && !store.userName) {
+      actions.createUserName(e);
+    } else return;
+  };
+
+  return (
+    <div className="row p-4">
+      <div className="col">
+        {store.userName ? (
+          <h4 className="m-3">{`Lista de contactos de ${store.userName}`}</h4>
+        ) : (
+          <div className="input-group">
+            <span className="input-group-text" id="username-addon">
+              @
+            </span>
+            <div className="form-floating">
+              <input
+                type="text"
+                className="form-control"
+                id="username"
+                placeholder="Username"
+                aria-label="Username"
+                aria-describedby="username-addon"
+                value={store.newUserName}
+                onChange={actions.inputUsername}
+                onKeyDown={actions.createUserName}
+              />
+              <label htmlFor="username">Nombre de usuario</label>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="col d-flex justify-content-end">
+        {!store.newUserName && !store.userName ? (
+          <h3>Elige un nombre de usuario</h3>
+        ) : (
+          <Link to="/addContact">
+            <button
+              type="button"
+              onClick={checkUserName}
+              className="btn btn-success my-3"
+            >
+              Añade un contacto
+            </button>
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 };
+
+export default NavBar;
